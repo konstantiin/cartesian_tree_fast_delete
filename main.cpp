@@ -3,7 +3,7 @@
 
 using namespace std;
 ofstream fout;
-void write_to_file(string name, vector <long long> &v){
+void write_to_file(const string& name, vector <long long> &v){
     fout << "\"" << name << "\"" << ": [";
     for (int i = 0; i < v.size() - 1; i++) fout << v[i] << ", ";
     fout << v[v.size() - 1] << "]";
