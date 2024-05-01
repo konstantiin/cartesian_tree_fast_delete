@@ -46,7 +46,6 @@ int main() {
 
     cartesian_tree <int> fast;
     test(fast);
-    cout
     std::multiset<int> stand;
 
     std::vector <long long> time_custom;

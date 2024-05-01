@@ -34,19 +34,23 @@ private:
         }
     };
     void renew(Node* &node){
-        if (!node)
+        if (!node){
             return;
+        }
 
         node->minimum = node->left != nullptr ? node->left->minimum : node;
-        if (node -> left)
+        if (node -> left){
             node -> left -> parent = node;
-        if (node -> right)
+        }
+        if (node -> right){
             node -> right -> parent = node;
+        }
     }
     std::tuple <Node*, Node*> split(Node *tree,const TKey &key){
         Node *left = nullptr, *right = nullptr;
-        if (!tree)
+        if (!tree){
             return std::make_tuple(left, right);
+        }
         auto cmp = Compare();
         if (cmp(tree -> key, key)) { // tree->key < key
             left = tree;
@@ -57,17 +61,21 @@ private:
         }
         renew(left);
         renew(right);
-        if (left)
+        if (left){
             left -> parent = nullptr;
-        if (right)
+        }
+        if (right){
             right -> parent = nullptr;
+        }
         return std::make_tuple(left, right);
     }
     Node* merge(Node *tree1, Node *tree2){
-        if (!tree1)
+        if (!tree1){
             return tree2;
-        if (!tree2)
+        }
+        if (!tree2){
             return tree1;
+        }
 
         if (tree1 -> prior > tree2 -> prior){
             tree1 -> right = merge(tree1 -> right, tree2);
@@ -79,8 +87,9 @@ private:
         return tree2;
     }
     void push_min(Node *node){
-        if  (!node)
+        if  (!node){
             return;
+        }
         node-> minimum = node -> left -> minimum;
         push_min(node -> parent);
     };
