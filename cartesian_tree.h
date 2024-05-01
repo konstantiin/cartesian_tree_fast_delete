@@ -17,32 +17,31 @@ template <typename TKey,
 class cartesian_tree{
 private:
     struct Node{
-        Node* par;
-        Node* minim;
+        Node* parent;
+        Node* minimum;
         Node* left;
         Node* right;
         TKey key;
         int prior;
         int count;
-        explicit Node(const TKey &value){
-            key = value;
+        explicit Node(const TKey &value): key(value){
             count = 1;
             left = nullptr;
             right = nullptr;
-            minim = this;
-            par = nullptr;
+            minimum = this;
+            parent = nullptr;
             prior = uniform(rng);
         }
     };
-    void renew(Node* &n){
-        if (!n)
+    void renew(Node* &node){
+        if (!node)
             return;
 
-        n->minim = n->left != nullptr ? n->left->minim : n;
-        if (n -> left)
-            n -> left -> par = n;
-        if (n -> right)
-            n -> right -> par = n;
+        node->minimum = node->left != nullptr ? node->left->minimum : node;
+        if (node -> left)
+            node -> left -> parent = node;
+        if (node -> right)
+            node -> right -> parent = node;
     }
     std::tuple <Node*, Node*> split(Node *tree,const TKey &key){
         Node *left = nullptr, *right = nullptr;
@@ -59,9 +58,9 @@ private:
         renew(left);
         renew(right);
         if (left)
-            left -> par = nullptr;
+            left -> parent = nullptr;
         if (right)
-            right -> par = nullptr;
+            right -> parent = nullptr;
         return std::make_tuple(left, right);
     }
     Node* merge(Node *tree1, Node *tree2){
@@ -82,45 +81,45 @@ private:
     void push_min(Node *node){
         if  (!node)
             return;
-        node-> minim = node -> left -> minim;
-        push_min(node -> par);
+        node-> minimum = node -> left -> minimum;
+        push_min(node -> parent);
     };
     void replace_with_right(Node *node){ // consider right exists
 
-        if (node -> par){
-            node -> par -> left = node -> right;
-            node -> right -> par = node -> par;
+        if (node -> parent){
+            node -> parent -> left = node -> right;
+            node -> right -> parent = node -> parent;
         } else{
             root = node -> right;
-            root -> par = nullptr;
+            root -> parent = nullptr;
         }
     }
     void dealloc_entity(Node *node){
         table.erase(node->key);
         delete node;
     }
-    void update_min(Node *minimal){
+    void update_min(Node *min_node){
         for(;;) {
-            if (minimal->count > 0) {
-                minimal->minim = minimal;
-                push_min(minimal->par);
+            if (min_node->count > 0) {
+                min_node->minimum = min_node;
+                push_min(min_node->parent);
                 return;
             }
-            if (minimal->right) {
-                replace_with_right(minimal);
-                Node *m = minimal->right->minim;
-                dealloc_entity(minimal);
-                minimal = m;
+            if (min_node->right) {
+                replace_with_right(min_node);
+                Node *m = min_node->right->minimum;
+                dealloc_entity(min_node);
+                min_node = m;
             } else {
-                if (minimal->par) {
-                    minimal->par->left = nullptr;
-                    Node *par = minimal->par;
-                    dealloc_entity(minimal);
-                    minimal = par;
+                if (min_node->parent) {
+                    min_node->parent->left = nullptr;
+                    Node *parent = min_node->parent;
+                    dealloc_entity(min_node);
+                    min_node = parent;
                 } else {
-                    dealloc_entity(minimal);
+                    dealloc_entity(min_node);
                     root = nullptr;
-                    root -> minim = root;
+                    root -> minimum = root;
                     return;
                 }
             }
@@ -149,8 +148,8 @@ public:
         table[x]= element;
     }
     TKey find_min(){
-        update_min(root -> minim);
-        return root -> minim -> key;
+        update_min(root -> minimum);
+        return root -> minimum -> key;
     }
 
 };

@@ -17,7 +17,25 @@ long long time_it(const auto func){
     auto end = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>( start- end).count();
 }
-
+void test(cartesian_tree <int> &cartesianTree){
+    for (int i = 0; i < 10; i++){
+        cartesianTree.insert(i);
+    }
+    for (int i = 0; i < 5; i++){
+        cartesianTree.insert(i);
+    }
+    assert(cartesianTree.find_min() == 0);
+    for (int i = 0; i < 5; i++){
+        cartesianTree.erase(i);
+    }
+    assert(cartesianTree.find_min() == 0);
+    for (int i = 0; i < 5; i++){
+        cartesianTree.erase(i);
+    }
+    assert(cartesianTree.find_min() == 5);
+    cartesianTree.insert(4);
+    assert(cartesianTree.find_min() == 4);
+}
 
 int main() {
     std::ios_base::sync_with_stdio(false);
@@ -27,7 +45,9 @@ int main() {
     fout << "{\n";
 
     cartesian_tree <int> fast;
-    std::set<int> stand;
+    test(fast);
+    cout
+    std::multiset<int> stand;
 
     std::vector <long long> time_custom;
     std::vector <long long> time_std;
