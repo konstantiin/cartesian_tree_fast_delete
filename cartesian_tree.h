@@ -28,11 +28,7 @@ private:
         TKey key;
         int prior;
         int count;
-        explicit Node(const TKey &value): key(value){
-            minimum = this;
-            count = 1;
-            prior = uniform(rng);
-        }
+        explicit Node(const TKey &value): key(value), count(1), prior(uniform(rng)), minimum(this){};
     };
     void renew(Node* &node){
         if (!node){
@@ -161,6 +157,5 @@ public:
         update_min(root -> minimum);
         return root -> minimum -> key;
     }
-
 };
 #endif
