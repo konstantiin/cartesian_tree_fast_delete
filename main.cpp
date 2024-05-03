@@ -2,8 +2,8 @@
 #include "cartesian_tree.h"
 
 
-std::ofstream fout;
-void write_to_file(std::string_view name, std::vector <long long> &v){
+
+void write_to_file(std::string_view name, std::vector <long long> &v, std::ofstream &fout){
     fout << "\"" << name << "\"" << ": [";
     for (int i = 0; i < v.size() - 1; i++) {
         fout << v[i] << ", ";
@@ -41,6 +41,7 @@ int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.precision(18);
+    std::ofstream fout;
     fout.open("../data.json");
     fout << "{\n";
 
@@ -60,9 +61,9 @@ int main() {
         }));
 
     }
-    write_to_file("my_insert", time_custom);
+    write_to_file("my_insert", time_custom, fout);
     fout << ",\n";
-    write_to_file("std_insert", time_std);
+    write_to_file("std_insert", time_std, fout);
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
@@ -74,9 +75,9 @@ int main() {
             stand.erase(i);
         }));
     }
-    write_to_file("my_erase", time_custom);
+    write_to_file("my_erase", time_custom, fout);
     fout << ",\n";
-    write_to_file("std_erase", time_std);
+    write_to_file("std_erase", time_std, fout);
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
@@ -91,9 +92,9 @@ int main() {
         }));
     }
 
-    write_to_file("my_min_erase", time_custom);
+    write_to_file("my_min_erase", time_custom, fout);
     fout << ",\n";
-    write_to_file("std_min_erase", time_std);
+    write_to_file("std_min_erase", time_std, fout);
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
@@ -124,9 +125,9 @@ int main() {
             }));
         }
     }
-    write_to_file("random_my", time_custom);
+    write_to_file("random_my", time_custom, fout);
     fout << ",\n";
-    write_to_file("random_std", time_std);
+    write_to_file("random_std", time_std, fout);
     fout << "\n}\n";
     fout.close();
     return 0;
