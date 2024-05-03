@@ -6,30 +6,31 @@
 #define FAST_CARTESIAN_TREE
 #include <random>
 #include <unordered_map>
+namespace cartesian{
+    std::uniform_int_distribution<int> uniform(1, INT32_MAX);
+    std::random_device dev;
+    std::mt19937_64 rng(dev());
+    template <typename TKey, typename Compare>
+    class cartesian_tree;
+}
 
-std::uniform_int_distribution<int> uniform(1, INT32_MAX);
-std::random_device dev;
-std::mt19937_64 rng(dev());
 
 
 template <typename TKey,
         typename Compare = std::less<TKey>>
-class cartesian_tree{
+class cartesian::cartesian_tree{
 private:
     struct Node{
-        Node* parent;
-        Node* minimum;
-        Node* left;
-        Node* right;
+        Node* parent = nullptr;
+        Node* minimum = nullptr;
+        Node* left = nullptr;
+        Node* right = nullptr;
         TKey key;
         int prior;
         int count;
         explicit Node(const TKey &value): key(value){
-            count = 1;
-            left = nullptr;
-            right = nullptr;
             minimum = this;
-            parent = nullptr;
+            count = 1;
             prior = uniform(rng);
         }
     };

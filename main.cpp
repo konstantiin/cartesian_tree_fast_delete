@@ -17,7 +17,7 @@ long long time_it(const auto func){
     auto end = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>( start- end).count();
 }
-void test(cartesian_tree <int> &cartesianTree){
+void test(cartesian::cartesian_tree <int> &cartesianTree){
     for (int i = 0; i < 10; i++){
         cartesianTree.insert(i);
     }
@@ -44,7 +44,7 @@ int main() {
     fout.open("../data.json");
     fout << "{\n";
 
-    cartesian_tree <int> fast;
+    cartesian::cartesian_tree <int> fast;
     test(fast);
     std::multiset<int> stand;
 
@@ -98,7 +98,7 @@ int main() {
     time_custom.clear();
     time_std.clear();
     for(int i = 0; i < 1e5; i++){
-        int cmd = uniform(rng) % 3;
+        int cmd = cartesian::uniform(cartesian::rng) % 3;
         if (cmd == 0){ // insert
             time_custom.push_back(time_it([&fast, &i](){
                 fast.insert(i);
@@ -128,5 +128,6 @@ int main() {
     fout << ",\n";
     write_to_file("random_std", time_std);
     fout << "\n}\n";
+    fout.close();
     return 0;
 }
