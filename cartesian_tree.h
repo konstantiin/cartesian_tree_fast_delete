@@ -6,6 +6,7 @@
 #define FAST_CARTESIAN_TREE
 #include <random>
 #include <unordered_map>
+#include <cassert>
 namespace cartesian{
     std::uniform_int_distribution<int> uniform(1, INT32_MAX);
     std::random_device dev;
@@ -14,7 +15,7 @@ namespace cartesian{
     class cartesian_tree;
 }
 
-
+    
 
 template <typename TKey,
         typename Compare = std::less<TKey>>
@@ -29,7 +30,16 @@ private:
         int prior;
         int count;
         explicit Node(const TKey &value): key(value), count(1), prior(uniform(rng)), minimum(this){};
+
     };
+    void free(Node* node){
+        if (!node){
+            return;
+        }
+        free(node->left);
+        free(node->right);
+        delete node;
+    }
     void renew(Node* &node){
         if (!node){
             return;
@@ -105,6 +115,7 @@ private:
         delete node;
     }
     void update_min(Node *min_node){
+        if (!min_node) return;
         for(;;) {
             if (min_node->count > 0) {
                 min_node->minimum = min_node;
@@ -125,7 +136,6 @@ private:
                 } else {
                     dealloc_entity(min_node);
                     root = nullptr;
-                    root -> minimum = root;
                     return;
                 }
             }
@@ -135,6 +145,7 @@ private:
     std::unordered_map <TKey, Node*> table;
 public:
     void erase(const TKey &x){
+
         auto iter = table.find(x);
         if (iter != table.end()){
             iter->second->count--;
@@ -153,9 +164,18 @@ public:
         root = merge(merge(less, element), greater);
         table[x]= element;
     }
-    TKey find_min(){
+    TKey* find_min(){
+        if (!root) {
+            return nullptr;
+        }
         update_min(root -> minimum);
-        return root -> minimum -> key;
+        if (!root) {
+            return nullptr;
+        }
+        return &(root -> minimum -> key);
+    }
+    ~cartesian_tree(){
+        free(root);
     }
 };
 #endif

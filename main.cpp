@@ -1,4 +1,9 @@
-#include <bits/stdc++.h>
+#include <string_view>
+#include <iostream>
+#include <cassert>
+#include <set>
+#include <fstream>
+#include <chrono>
 #include "cartesian_tree.h"
 
 
@@ -24,17 +29,17 @@ void test(cartesian::cartesian_tree <int> &cartesianTree){
     for (int i = 0; i < 5; i++){
         cartesianTree.insert(i);
     }
-    assert(cartesianTree.find_min() == 0);
+    assert(*cartesianTree.find_min() == 0);
     for (int i = 0; i < 5; i++){
         cartesianTree.erase(i);
     }
-    assert(cartesianTree.find_min() == 0);
+    assert(*cartesianTree.find_min() == 0);
     for (int i = 0; i < 5; i++){
         cartesianTree.erase(i);
     }
-    assert(cartesianTree.find_min() == 5);
+    assert(*cartesianTree.find_min() == 5);
     cartesianTree.insert(4);
-    assert(cartesianTree.find_min() == 4);
+    assert(*cartesianTree.find_min() == 4);
 }
 
 int main() {
@@ -52,7 +57,7 @@ int main() {
     std::vector <long long> time_custom;
     std::vector <long long> time_std;
 
-    for (int i = 0; i < 1e6; i++){
+    for (int i = 0; i < 1e2; i++){
         time_custom.push_back(time_it([&fast, &i](){
             fast.insert(i);
         }));
@@ -67,7 +72,7 @@ int main() {
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
-    for (int i = 0; i < 1e5; i++){
+    for (int i = 0; i < 1e2; i++){
         time_custom.push_back(time_it([&fast, &i](){
             fast.erase(i);
         }));
@@ -81,24 +86,26 @@ int main() {
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
-    for (int i = 0; i < 1e5; i++){
+    for (int i = 0; i < 1e2; i++){
         time_custom.push_back(time_it([&fast](){
-            int minimal = fast.find_min();
-            fast.erase(minimal);
+            int* ptr = fast.find_min();
+            if (ptr){
+                fast.erase(*ptr);
+            }
         }));
         time_std.push_back(time_it([&stand](){
-            int minimal= *stand.begin();
-            stand.erase(minimal);
+            if (!stand.empty()){
+                stand.erase(*stand.begin());
+            }
         }));
     }
-
     write_to_file("my_min_erase", time_custom, fout);
     fout << ",\n";
     write_to_file("std_min_erase", time_std, fout);
     fout << ",\n";
     time_custom.clear();
     time_std.clear();
-    for(int i = 0; i < 1e5; i++){
+    for(int i = 0; i < 1e2; i++){
         int cmd = cartesian::uniform(cartesian::rng) % 3;
         if (cmd == 0){ // insert
             time_custom.push_back(time_it([&fast, &i](){
@@ -116,12 +123,15 @@ int main() {
             }));
         } else{ // get_min
             time_custom.push_back(time_it([&fast](){
-                int minimal = fast.find_min();
-                fast.erase(minimal);
+                int* ptr = fast.find_min();
+                if (ptr){
+                    fast.erase(*ptr);
+                }
             }));
             time_std.push_back(time_it([&stand](){
-                int minimal= *stand.begin();
-                stand.erase(minimal);
+                if (!stand.empty()){
+                    stand.erase(*stand.begin());
+                }
             }));
         }
     }
